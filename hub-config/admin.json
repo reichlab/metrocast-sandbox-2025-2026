@@ -1,24 +1,19 @@
 {
     "schema_version": "https://raw.githubusercontent.com/hubverse-org/schemas/main/v6.0.0/admin-schema.json",
-    "name": "Template Forecast Hub",
-    "maintainer": "Consortium of Infectious Disease Modeling Hubs",
+    "name": "ReichLab MetroCast Sandbox Hub",
+    "maintainer": "Reich Lab",
     "contact": {
-        "name": "Joe Bloggs",
-        "email": "j.bloggs@cidmh.com"
+        "name": "Nick Reich",
+        "email": "nick@umass.edu"
     },
     "repository": {
         "host": "github",
-        "owner": "hubverse-org",
-        "name": "hubTemplate"
+        "owner": "reichlab",
+        "name": "metrocast-sandbox-2025-2026"
     },
-    "file_format": ["csv", "parquet"],
+    "file_format": ["csv"],
     "timezone": "US/Eastern",
     "cloud": {
-        "enabled": false,
-        "host": {
-            "name": "aws",
-            "storage_service": "s3",
-            "storage_location": "hub-template"
-        }
+        "enabled": false
     }
 }
