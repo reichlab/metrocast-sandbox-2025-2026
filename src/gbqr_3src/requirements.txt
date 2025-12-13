@@ -1,0 +1,4 @@
+click
+pandas
+python-dateutil
+idmodels @ git+https://github.com/reichlab/idmodels

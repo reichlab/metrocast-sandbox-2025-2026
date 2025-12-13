@@ -1,0 +1,15 @@
+team_name: "UMass Amherst"
+team_abbr: "UMass"
+model_name: "Gradient Boosting Quantile Regression (3 sources)"
+model_abbr: "gbqr_3src"
+local_fit_jointly: true
+model_contributors:
+  - name: "Nicholas Reich"
+    affiliation: "UMass Amherst"
+    email: "nick@umass.edu"
+  - name: "Evan Ray"
+    affiliation: "UMass Amherst"
+license: "CC-BY-4.0"
+designated_model: true
+data_sources: "CDC NSSP emergency department surveillance data, CDC ILINet outpatient surveillance data, CDC FluSurv-NET hospitalization data"
+methods: "Gradient boosting quantile regression model using three data sources (NSSP, ILINet, FluSurv-NET). The model uses bagging with 100 bootstrap samples, each using 70% of the available data. Features include lagged values of surveillance signals and location-level indicators. A 4th root power transform is applied to stabilize variance. Predictions are made jointly across all locations."
