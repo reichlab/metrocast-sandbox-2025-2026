@@ -1,4 +1,5 @@
 click
 pandas
 python-dateutil
+iddata @ git+https://github.com/reichlab/iddata@5275f407dca858c23a065610d11fc203d0ec3edb  # v0.1.0 - required for HSA-level NSSP data
 idmodels @ git+https://github.com/reichlab/idmodels

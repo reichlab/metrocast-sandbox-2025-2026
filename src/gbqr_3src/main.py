@@ -40,18 +40,18 @@ def load_location_crosswalk():
 
 
 def parse_locations(locations_df):
-    """Parse locations into states and HSAs with mappings.
+    """Parse locations into states and HSAs with separate mappings.
 
     Returns:
         states: List of state FIPS codes
         hsas: List of HSA NCI IDs
-        code_to_slug: Dict mapping FIPS/HSA codes to location slugs
-        slug_to_code: Dict mapping location slugs to FIPS/HSA codes
+        state_code_to_slug: Dict mapping FIPS codes to state location slugs
+        hsa_code_to_slug: Dict mapping HSA NCI IDs to HSA location slugs
     """
     states = []
     hsas = []
-    code_to_slug = {}
-    slug_to_code = {}
+    state_code_to_slug = {}
+    hsa_code_to_slug = {}
 
     for _, row in locations_df.iterrows():
         slug = row["location"]
@@ -60,20 +60,18 @@ def parse_locations(locations_df):
         location_type = row["location_type"]
 
         if original_code == "All":
-            # State-level location
+            # State-level location - use FIPS code
             fips = STATE_ABB_TO_FIPS.get(state_abb)
             if fips:
                 states.append(fips)
-                code_to_slug[fips] = slug
-                slug_to_code[slug] = fips
+                state_code_to_slug[fips] = slug
         elif location_type == "hsa_nci_id":
-            # HSA-level location
+            # HSA-level location - use HSA NCI ID
             hsas.append(original_code)
-            code_to_slug[original_code] = slug
-            slug_to_code[slug] = original_code
+            hsa_code_to_slug[original_code] = slug
         # Skip nc_flu_region_id locations for now (not supported by NSSP)
 
-    return states, hsas, code_to_slug, slug_to_code
+    return states, hsas, state_code_to_slug, hsa_code_to_slug
 
 
 def transform_predictions(preds_df, code_to_slug, target_name="Flu ED visits pct"):
@@ -395,7 +393,7 @@ def main(today_date: str, short_run: bool):
 
     # Load and parse location crosswalk
     locations_df = load_location_crosswalk()
-    states, hsas, code_to_slug, slug_to_code = parse_locations(locations_df)
+    states, hsas, state_code_to_slug, hsa_code_to_slug = parse_locations(locations_df)
 
     print(f"Running forecasts for reference date: {reference_date}")
     print(f"States: {states}")
@@ -454,7 +452,7 @@ def main(today_date: str, short_run: bool):
         if states_output_file.exists():
             preds_states = pd.read_csv(states_output_file, dtype={"location": str})
             preds_states_transformed = transform_predictions(
-                preds_states, code_to_slug, "Flu ED visits pct"
+                preds_states, state_code_to_slug, "Flu ED visits pct"
             )
             all_predictions.append(preds_states_transformed)
             print(f"  Generated {len(preds_states_transformed)} state predictions")
@@ -507,21 +505,15 @@ def main(today_date: str, short_run: bool):
 
             if not preds_hsas_non_nyc.empty:
                 preds_non_nyc_transformed = transform_predictions(
-                    preds_hsas_non_nyc, code_to_slug, "Flu ED visits pct"
+                    preds_hsas_non_nyc, hsa_code_to_slug, "Flu ED visits pct"
                 )
                 all_predictions.append(preds_non_nyc_transformed)
                 print(f"  Generated {len(preds_non_nyc_transformed)} HSA predictions (Flu)")
 
             if not preds_hsas_nyc.empty:
                 preds_nyc_transformed = transform_predictions(
-                    preds_hsas_nyc, code_to_slug, "ILI ED visits pct"
+                    preds_hsas_nyc, hsa_code_to_slug, "ILI ED visits pct"
                 )
-                # Deduplicate NYC predictions by taking the mean of non-null values
-                # This can happen when the model processes NYC from multiple internal data rows
-                dedup_cols = ["location", "reference_date", "horizon", "target_end_date", "target", "output_type", "output_type_id"]
-                # Drop rows with NaN values before grouping, then average
-                preds_nyc_transformed = preds_nyc_transformed.dropna(subset=["value"])
-                preds_nyc_transformed = preds_nyc_transformed.groupby(dedup_cols, as_index=False)["value"].mean()
                 all_predictions.append(preds_nyc_transformed)
                 print(f"  Generated {len(preds_nyc_transformed)} NYC predictions (ILI)")
 
