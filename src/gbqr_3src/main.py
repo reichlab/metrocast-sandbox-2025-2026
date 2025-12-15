@@ -236,7 +236,29 @@ class GBQRModelWithNYC(GBQRModel):
             if removed_count > 0:
                 print(f"  Removed {removed_count} existing NYC rows from data")
 
+            # Get the max date from non-NYC HSA data to ensure NYC doesn't extend beyond
+            # This prevents NYC having a later date than other HSAs, which would filter them out
+            hsa_max_date = df[df["agg_level"] == "hsa"]["wk_end_date"].max()
+            print(f"  Max HSA data date (non-NYC): {hsa_max_date.date() if pd.notna(hsa_max_date) else 'N/A'}")
+
             nyc_df = self.nyc_data.copy()
+
+            # Filter NYC data to not extend beyond HSA data
+            if pd.notna(hsa_max_date):
+                pre_filter_count = len(nyc_df)
+                nyc_df = nyc_df[nyc_df["wk_end_date"] <= hsa_max_date]
+                date_filtered = pre_filter_count - len(nyc_df)
+                if date_filtered > 0:
+                    print(f"  Filtered {date_filtered} NYC rows to align with HSA max date")
+
+            # Filter out pandemic-affected seasons (2020/21 and 2021/22)
+            # Keep 2019/20 as it was largely typical before March
+            pandemic_seasons = ["2020/21", "2021/22"]
+            pre_filter_count = len(nyc_df)
+            nyc_df = nyc_df[~nyc_df["season"].isin(pandemic_seasons)]
+            filtered_count = pre_filter_count - len(nyc_df)
+            if filtered_count > 0:
+                print(f"  Filtered out {filtered_count} NYC rows from pandemic seasons {pandemic_seasons}")
 
             # Apply the same transformations as iddata does for NSSP data
             # Power transform: inc_trans = (inc + 0.01)^0.25
@@ -245,24 +267,33 @@ class GBQRModelWithNYC(GBQRModel):
             else:
                 nyc_df["inc_trans"] = nyc_df["inc"] + 0.01
 
-            # Calculate scale and center factors from NYC's own data
-            # Scale: 95th percentile of in-season data
-            nyc_in_season = nyc_df[(nyc_df["season_week"] >= 10) & (nyc_df["season_week"] <= 45)]
-            if len(nyc_in_season) > 0:
-                scale_factor = nyc_in_season["inc_trans"].quantile(0.95)
+            # Extract scale and center factors from pooled HSA data (for consistency)
+            # Use factors from other HSAs so NYC is on the same scale
+            hsa_data = df[df["agg_level"] == "hsa"]
+            if len(hsa_data) > 0 and "inc_trans_scale_factor" in hsa_data.columns:
+                # Get the pooled scale/center factors (should be same across all HSAs)
+                scale_factor = hsa_data["inc_trans_scale_factor"].iloc[0]
+                center_factor = hsa_data["inc_trans_center_factor"].iloc[0]
+                print(f"  Using pooled HSA scale_factor={scale_factor:.4f}, center_factor={center_factor:.4f}")
             else:
-                scale_factor = nyc_df["inc_trans"].quantile(0.95)
+                # Fallback: compute from NYC data if HSA factors not available
+                print("  Warning: Could not extract HSA factors, computing from NYC data")
+                nyc_in_season = nyc_df[(nyc_df["season_week"] >= 10) & (nyc_df["season_week"] <= 45)]
+                if len(nyc_in_season) > 0:
+                    scale_factor = nyc_in_season["inc_trans"].quantile(0.95)
+                else:
+                    scale_factor = nyc_df["inc_trans"].quantile(0.95)
+                nyc_df["inc_trans_cs_temp"] = nyc_df["inc_trans"] / (scale_factor + 0.01)
+                nyc_in_season_cs = nyc_df[(nyc_df["season_week"] >= 10) & (nyc_df["season_week"] <= 45)]
+                if len(nyc_in_season_cs) > 0:
+                    center_factor = nyc_in_season_cs["inc_trans_cs_temp"].mean()
+                else:
+                    center_factor = nyc_df["inc_trans_cs_temp"].mean()
+                nyc_df = nyc_df.drop(columns=["inc_trans_cs_temp"])
 
+            # Apply the pooled scale and center factors to NYC data
             nyc_df["inc_trans_scale_factor"] = scale_factor
             nyc_df["inc_trans_cs"] = nyc_df["inc_trans"] / (scale_factor + 0.01)
-
-            # Center: mean of centered-scaled in-season data
-            nyc_in_season_cs = nyc_df[(nyc_df["season_week"] >= 10) & (nyc_df["season_week"] <= 45)]
-            if len(nyc_in_season_cs) > 0:
-                center_factor = nyc_in_season_cs["inc_trans_cs"].mean()
-            else:
-                center_factor = nyc_df["inc_trans_cs"].mean()
-
             nyc_df["inc_trans_center_factor"] = center_factor
             nyc_df["inc_trans_cs"] = nyc_df["inc_trans_cs"] - center_factor
 
