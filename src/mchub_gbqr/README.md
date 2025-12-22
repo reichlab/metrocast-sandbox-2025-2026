@@ -15,20 +15,10 @@ This module provides the core infrastructure for Gradient Boosting Quantile Regr
 
 ## Dependencies
 
-### Python Packages
+Install all Python dependencies:
 
 ```bash
-pip install click python-dateutil pandas numpy lightgbm tqdm pymmwr
-```
-
-### Custom Packages (from GitHub)
-
-```bash
-# Disease data loader - provides access to ILINet, FluSurvNet, NHSN, NSSP data
-pip install git+https://github.com/reichlab/iddata.git
-
-# Preprocessing utilities for disease forecasting
-pip install git+https://github.com/reichlab/idmodels.git
+pip install -r src/mchub_gbqr/requirements.txt
 ```
 
 ### R Packages (for plotting only)

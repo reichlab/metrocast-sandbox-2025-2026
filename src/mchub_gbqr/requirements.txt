@@ -1,0 +1,9 @@
+click
+python-dateutil
+pandas
+numpy
+lightgbm
+tqdm
+pymmwr
+git+https://github.com/reichlab/iddata.git
+git+https://github.com/reichlab/idmodels.git

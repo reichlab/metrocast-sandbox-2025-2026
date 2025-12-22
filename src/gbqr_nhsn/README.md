@@ -20,12 +20,7 @@ Key features:
 ## Environment Setup
 
 ```bash
-# Install required packages
-pip install click python-dateutil pandas numpy lightgbm tqdm pymmwr
-
-# Install custom packages from GitHub
-pip install git+https://github.com/reichlab/iddata.git
-pip install git+https://github.com/reichlab/idmodels.git
+pip install -r src/mchub_gbqr/requirements.txt
 ```
 
 ## Running the Model
