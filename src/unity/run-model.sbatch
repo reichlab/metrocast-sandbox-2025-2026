@@ -2,7 +2,7 @@
 #SBATCH -c 4                          # CPUs per task
 #SBATCH --mem=24G                     # Memory (adjust per model if needed)
 #SBATCH -p cpu                        # Partition
-#SBATCH -t 03:00:00                   # Time limit (3 hours max)
+#SBATCH -t 05:00:00                   # Time limit (5 hours default)
 #SBATCH -o logs/slurm-%j-%x.out       # Output file (%j=job_id, %x=job_name)
 #SBATCH --mail-type=END,FAIL          # Email on completion or failure
 

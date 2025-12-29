@@ -88,18 +88,18 @@ unity-slurm-account-usage
 
 ## Resource Configuration
 
-Default resources per model:
+Default resources per model (includes 2h buffer for Unity variability):
 
 | Model | Memory | Time | CPUs |
 |-------|--------|------|------|
-| gbqr | 16GB | 1h | 4 |
-| gbqr_ili | 16GB | 1.5h | 4 |
-| gbqr_flusurv | 16GB | 1.5h | 4 |
-| gbqr_nhsn | 16GB | 2h | 4 |
-| gbqr_nssp | 24GB | 2h | 4 |
-| gbqr_5src | 32GB | 3h | 4 |
+| gbqr | 16GB | 3.5h | 4 |
+| gbqr_ili | 16GB | 4h | 4 |
+| gbqr_flusurv | 16GB | 4h | 4 |
+| gbqr_nhsn | 20GB | 4.5h | 4 |
+| gbqr_nssp | 24GB | 4.5h | 4 |
+| gbqr_5src | 32GB | 5.5h | 4 |
 
-Adjust in `run-model.sbatch` if needed.
+Adjust in `submit-all.sh` or `run-model.sbatch` if needed.
 
 ## Troubleshooting
 

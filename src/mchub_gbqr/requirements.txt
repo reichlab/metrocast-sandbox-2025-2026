@@ -5,5 +5,5 @@ numpy
 lightgbm
 tqdm
 pymmwr
-git+https://github.com/reichlab/iddata.git
+# iddata is installed as a dependency of idmodels
 git+https://github.com/reichlab/idmodels.git

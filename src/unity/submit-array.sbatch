@@ -3,7 +3,7 @@
 #SBATCH -c 4                          # CPUs per task
 #SBATCH --mem=32G                     # Memory (use max needed across models)
 #SBATCH -p cpu                        # Partition
-#SBATCH -t 04:00:00                   # Time limit (use max needed)
+#SBATCH -t 06:00:00                   # Time limit (use max needed + buffer)
 #SBATCH -o logs/slurm-%A_%a.out       # Output: %A=array_job_id, %a=task_id
 #SBATCH --mail-type=END,FAIL          # Email on completion or failure
 #SBATCH --job-name=gbqr-array
