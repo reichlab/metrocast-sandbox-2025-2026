@@ -40,9 +40,9 @@ fi
 # Optional extra arguments (e.g., --short_run)
 EXTRA_ARGS="${EXTRA_ARGS:-}"
 
-# Determine repo root
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+# Determine repo root from submission directory
+# SLURM_SUBMIT_DIR is the directory where sbatch was called
+REPO_ROOT="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
 echo "=============================================="
 echo "GBQR Array Job"

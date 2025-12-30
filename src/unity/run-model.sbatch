@@ -42,9 +42,9 @@ fi
 # Set job name dynamically (for output file naming)
 # Note: This is set via sbatch command line in submit-all.sh
 
-# Determine repo root (relative to this script's location)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+# Determine repo root from submission directory
+# SLURM_SUBMIT_DIR is the directory where sbatch was called
+REPO_ROOT="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 
 echo "=============================================="
 echo "GBQR Model: $MODEL_NAME"

@@ -4,8 +4,12 @@ This directory contains scripts for running GBQR models on the UMass Unity HPC c
 
 ## Quick Start
 
+**Important**: Always submit jobs from the repository root directory. The scripts use `SLURM_SUBMIT_DIR` to locate virtual environments and model code.
+
 ```bash
 # On Unity, from repo root
+cd /path/to/metrocast-sandbox-2025-2026
+
 # 1. Set up environments (one-time)
 ./src/unity/setup-unity.sh
 
@@ -42,6 +46,8 @@ cd metrocast-sandbox-2025-2026
 This creates virtual environments for each model in `src/<model>/.venv/`.
 
 ## Running Models
+
+**Note**: Always run these commands from the repository root directory.
 
 ### Option 1: Submit All Models
 
