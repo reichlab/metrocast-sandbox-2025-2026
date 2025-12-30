@@ -107,6 +107,45 @@ Default resources per model (includes 2h buffer for Unity variability):
 
 Adjust in `submit-all.sh` or `run-model.sbatch` if needed.
 
+## Scheduling Weekly Runs with scrontab
+
+Unity supports `scrontab`, SLURM's cron-like interface for recurring jobs.
+
+### Setup
+
+1. Open your scrontab:
+   ```bash
+   scrontab -e
+   ```
+
+2. Add the following entry (adjust path to your repo location):
+   ```bash
+   #SCRON -p cpu
+   #SCRON -c 1
+   #SCRON --mem=1G
+   #SCRON -t 00:10:00
+   #SCRON -o /work/pi_username_umass_edu/metrocast-sandbox-2025-2026/logs/scron-%j.out
+
+   # Run every Wednesday at 1pm ET (6pm UTC)
+   0 18 * * 3 /work/pi_username_umass_edu/metrocast-sandbox-2025-2026/src/unity/submit-all.sh $(date +\%Y-\%m-\%d)
+   ```
+
+3. Save and exit the editor.
+
+### Notes
+
+- **Timezone**: Unity uses UTC. 1pm ET = 6pm UTC (during EST/winter) or 5pm UTC (during EDT/summer).
+- **Paths**: Use absolute paths in scrontab entries.
+- **Resources**: The scrontab job just runs the submit script (low resources), which then submits the actual model jobs.
+
+### scrontab Commands
+
+```bash
+scrontab -e      # Edit your scrontab
+scrontab -l      # List/view current scrontab
+scrontab -r      # Remove scrontab entirely
+```
+
 ## Troubleshooting
 
 ### Job pending with "MaxCpuPerAccount"
