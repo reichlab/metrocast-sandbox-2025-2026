@@ -159,8 +159,8 @@
                             "optional": ["Flu ED visits pct"]
                         },
                         "horizon": {
-                            "required": null,
-                            "optional": [-1, 0, 1, 2, 3]
+                            "required": [0, 1, 2, 3],
+                            "optional": null
                         },
                         "location": {
                             "required": null,
@@ -207,6 +207,20 @@
                               "st-cloud",
                               "rochester",
                               "minnesota",
+                              "nenc",
+                              "senc",
+                              "fay-area",
+                              "rtp-area",
+                              "triad-area",
+                              "wnc",
+                              "clt-area",
+                              "north-carolina",                                
+                              "portland-or",
+                              "salem",
+                              "deschutes",
+                              "eugene",
+                              "medford",
+                              "oregon", 
                               "columbia",
                               "greenville",
                               "florence",

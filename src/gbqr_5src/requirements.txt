@@ -1,0 +1,3 @@
+# GBQR Model (5 Sources) - Requirements
+# References shared requirements from mchub_gbqr
+-r ../mchub_gbqr/requirements.txt

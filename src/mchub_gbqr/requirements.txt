@@ -1,0 +1,9 @@
+click
+python-dateutil
+pandas
+numpy
+lightgbm
+tqdm
+pymmwr
+# iddata is installed as a dependency of idmodels
+git+https://github.com/reichlab/idmodels.git

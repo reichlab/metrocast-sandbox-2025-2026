@@ -1,0 +1,3 @@
+# GBQR Model (MCHub + FluSurvNet) - Requirements
+# References shared requirements from mchub_gbqr
+-r ../mchub_gbqr/requirements.txt
